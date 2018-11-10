@@ -4,7 +4,7 @@ In this repository I'll be adding my Python scripts.
 
 ### aws-ec2-list-instances.py ###
 
-uses boto3 to list AWS EC2 instances.
+uses boto3 to list AWS EC2 instances ids.
 
 ## Configuring
 
@@ -16,5 +16,9 @@ aws configure --profile python
 
 'pipenv run "python aws/aws-ec2-list-instances.py'
 
+
+### aws-ec2-manager.py
+
+updated script that uses click module, and show more information about EC2 instances
 
 
