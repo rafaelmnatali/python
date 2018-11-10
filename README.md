@@ -21,4 +21,12 @@ aws configure --profile python
 
 updated script that uses click module, and show more information about EC2 instances
 
+## Configuring
 
+uses the configuration file created by the AWS CLI. e.g.: 
+
+aws configure --profile python
+
+## Running
+
+'pipenv run "python aws/aws-ec2-manager.py'
