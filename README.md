@@ -29,4 +29,7 @@ aws configure --profile python
 
 ## Running
 
-'pipenv run "python aws/aws-ec2-manager.py'
+'pipenv run "python aws/aws-ec2-manager.py <command> <--project=PROJECT>"'
+
+*command* is list, stop, or start
+*project* is optional
