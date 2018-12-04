@@ -9,7 +9,7 @@ client = boto3.client('s3')
 
 @click.group()
 def buckets():
-    """Commands for S3"""
+    """Commands for S3 security check"""
 
 
 @buckets.command('listbucket')
