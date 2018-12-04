@@ -5,7 +5,7 @@ from prettytable import PrettyTable
 
 # Retrieve s3 information
 s3 = boto3.resource('s3')
-
+client = boto3.client('s3')
 
 @click.group()
 def buckets():
@@ -53,6 +53,23 @@ def policy_bucket(getbucketpolicy):
         except botocore.exceptions.ClientError:
                 pass
     return
+
+@buckets.command('getbucketencryption')
+@click.option('--getbucketencryption', default="true", help="List S3 bucket's with Encryption enabled")
+def policy_bucket(getbucketencryption):
+    x = PrettyTable()
+    x.field_names = ["Encryption", "S3 Bucket"]
+    x.align["S3 Bucket"] = "l"
+
+    for bucket in s3.buckets.all():
+        try:
+            response = client.get_bucket_encryption(Bucket = bucket.name)
+            x.add_row([response['ServerSideEncryptionConfiguration'], bucket.name])
+
+        except botocore.exceptions.ClientError:
+            x.add_row(["No Encryption",bucket.name])
+
+    print(x)
 
 if __name__ == '__main__':
     buckets()
