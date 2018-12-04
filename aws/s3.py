@@ -1,43 +1,58 @@
 import boto3
 import click
+import botocore
 from prettytable import PrettyTable
-
 
 # Retrieve s3 information
 s3 = boto3.resource('s3')
 
+
 @click.group()
 def buckets():
-	"""Command for S3"""
+    """Command for S3"""
+
 
 @buckets.command('listbucket')
 @click.option('--listbucket', default="true", help="List S3 bucket names")
-
 def list_bucket(listbucket):
-	x = PrettyTable()
-	x.field_names = ["S3 Bucket"]
-	x.align["S3 Bucket"] = "l"
+    x = PrettyTable()
+    x.field_names = ["S3 Bucket"]
+    x.align["S3 Bucket"] = "l"
 
-	for bucket in s3.buckets.all():
-		x.add_row([bucket.name])
-	print(x)
-	return
+    for bucket in s3.buckets.all():
+        x.add_row([bucket.name])
+    print(x)
+    return
 
 
-@buckets.command('getacl')
-@click.option('--getacl', default="true", help="List S3 bucket's ACL information")
+@buckets.command('getpublicacl')
+@click.option('--getpublicacl', default="true", help="List S3 bucket's with Public Access enabled")
+def acl_bucket(getpublicacl):
+    x = PrettyTable()
+    x.field_names = ["Permission", "S3 Public Buckets"]
+    x.align["S3 Public Buckets"] = "l"
 
-def acl_bucket(getacl):
-	x = PrettyTable()
-	x.field_names = ["S3 Bucket", "ACL"]
+    for bucket in s3.buckets.all():
+        bucket_acl = bucket.Acl()
+        for grant in bucket_acl.grants:
+            # http://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html
+            if grant['Grantee']['Type'].lower() == 'group' \
+                    and grant['Grantee']['URI'] == 'http://acs.amazonaws.com/groups/global/AllUsers':
+                        x.add_row([grant['Permission'].lower(), bucket.name])
+    print(x)
 
-	for bucket in s3.buckets.all():
-		bucket_acl = s3.BucketAcl(bucket.name)
-	#	print("Bucket:", bucket.name, "| ACL: ", bucket_acl.load())
-		x.add_row([bucket.name,bucket_acl.load])
-	print(x)
-	return
-    
+@buckets.command('getbucketpolicy')
+@click.option('--getbucketpolicy', default="true", help="List S3 bucket's with Policies enabled")
+def policy_bucket(getbucketpolicy):
+
+    for bucket in s3.buckets.all():
+        try:
+            bucket_policy = bucket.Policy()
+            print("\nBucket: ",bucket.name, "\nPolicy: ",bucket_policy.policy)
+
+        except botocore.exceptions.ClientError:
+                pass
+    return
 
 if __name__ == '__main__':
-	buckets()
+    buckets()
