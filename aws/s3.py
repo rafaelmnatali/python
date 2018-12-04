@@ -9,7 +9,7 @@ client = boto3.client('s3')
 
 @click.group()
 def buckets():
-    """Command for S3"""
+    """Commands for S3"""
 
 
 @buckets.command('listbucket')
@@ -21,6 +21,7 @@ def list_bucket(listbucket):
 
     for bucket in s3.buckets.all():
         x.add_row([bucket.name])
+
     print(x)
     return
 
@@ -29,7 +30,7 @@ def list_bucket(listbucket):
 @click.option('--getpublicacl', default="true", help="List S3 bucket's with Public Access enabled")
 def acl_bucket(getpublicacl):
     x = PrettyTable()
-    x.field_names = ["Permission", "S3 Public Buckets"]
+    x.field_names = ["S3 Public Buckets", "Permission"]
     x.align["S3 Public Buckets"] = "l"
 
     for bucket in s3.buckets.all():
@@ -38,7 +39,7 @@ def acl_bucket(getpublicacl):
             # http://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html
             if grant['Grantee']['Type'].lower() == 'group' \
                     and grant['Grantee']['URI'] == 'http://acs.amazonaws.com/groups/global/AllUsers':
-                        x.add_row([grant['Permission'].lower(), bucket.name])
+                        x.add_row([bucket.name, grant['Permission'].lower()])
     print(x)
 
 @buckets.command('getbucketpolicy')
@@ -51,23 +52,57 @@ def policy_bucket(getbucketpolicy):
             print("\nBucket: ",bucket.name, "\nPolicy: ",bucket_policy.policy)
 
         except botocore.exceptions.ClientError:
-                pass
+            print("\nBucket: ", bucket.name, "\nNo Bucket Policy")
     return
 
 @buckets.command('getbucketencryption')
 @click.option('--getbucketencryption', default="true", help="List S3 bucket's with Encryption enabled")
 def policy_bucket(getbucketencryption):
     x = PrettyTable()
-    x.field_names = ["Encryption", "S3 Bucket"]
+    x.field_names = ["S3 Bucket", "Encryption"]
     x.align["S3 Bucket"] = "l"
 
     for bucket in s3.buckets.all():
         try:
             response = client.get_bucket_encryption(Bucket = bucket.name)
-            x.add_row([response['ServerSideEncryptionConfiguration'], bucket.name])
+            x.add_row([bucket.name, response['ServerSideEncryptionConfiguration']])
 
         except botocore.exceptions.ClientError:
-            x.add_row(["No Encryption",bucket.name])
+            x.add_row([bucket.name, "No Encryption"])
+
+    print(x)
+
+@buckets.command('getbucketversioning')
+@click.option('--getbucketversioning', default="true", help="List S3 bucket's with Versioning enabled")
+def policy_bucket(getbucketversioning):
+    x = PrettyTable()
+    x.field_names = ["S3 Bucket", "Versioning", "MFA Delete"]
+    x.align["S3 Bucket"] = "l"
+
+    for bucket in s3.buckets.all():
+        try:
+            bucket_versioning = bucket.Versioning()
+            x.add_row([bucket.name, bucket_versioning.status, bucket_versioning.mfa_delete])
+
+        except botocore.exceptions.ClientError:
+            x.add_row([bucket.name, "No Bucket Versioning", "No MFA Delete"])
+
+    print(x)
+
+@buckets.command('getpublicaccessblock')
+@click.option('--getpublicaccessblock', default="true", help="List S3 bucket's with Encryption enabled")
+def policy_bucket(getpublicaccessblock):
+    x = PrettyTable()
+    x.field_names = ["S3 Bucket", "BlockPublicAcls"] #, "IgnorePublicAcls", "BlockPublicPolicy", "RestrictPublicBuckets"]
+    x.align["S3 Bucket"] = "l"
+
+    for bucket in s3.buckets.all():
+        try:
+            response = client.get_public_access_block(Bucket = bucket.name)
+            x.add_row([bucket.name, "True"])
+
+        except botocore.exceptions.ClientError:
+            x.add_row([bucket.name, "False"])
 
     print(x)
 
