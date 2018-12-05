@@ -25,6 +25,13 @@ def list_bucket(listbucket):
     print(x)
     return
 
+@buckets.command('listbucketsize')
+@click.option('--listbucketsize', default="true", help="List S3 bucket names")
+def list_bucket_size(listbucketsize):
+
+    response = client.list_objects(Bucket="centauro-sql-dev-backups")
+    print(response['Contents'])
+
 
 @buckets.command('getpublicacl')
 @click.option('--getpublicacl', default="true", help="List S3 bucket's with Public Access enabled")
