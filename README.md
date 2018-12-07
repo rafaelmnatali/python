@@ -18,3 +18,24 @@ aws configure --profile python
 
 *command* is list, stop, or start
 *project* is optional
+
+### s3.py
+
+## Running
+
+python s3.py
+
+Usage: s3.py [OPTIONS] COMMAND [ARGS]...
+
+  Commands for S3 security check
+
+Options:
+  --help  Show this message and exit.
+
+Commands:
+  getbucketencryption
+  getbucketpolicy
+  getbucketversioning
+  getpublicacl
+  listbucket
+  listbucketsize (limited to 1000 objects)
