@@ -28,9 +28,25 @@ def list_bucket(listbucket):
 @buckets.command('listbucketsize')
 @click.option('--listbucketsize', default="true", help="List S3 bucket names")
 def list_bucket_size(listbucketsize):
+    x = PrettyTable()
+    x.field_names = ["S3 Bucket", "Size (Mb)"]
+    x.align["S3 Bucket"] = "l"
 
-    response = client.list_objects(Bucket="centauro-sql-dev-backups")
-    print(response['Contents'])
+    for bucket in s3.buckets.all():
+        response = client.list_objects(Bucket=bucket.name)
+        try:
+            r = len(response['Contents'])
+            size = 0
+            for r in response['Contents']:
+                size = (r['Size']) + size
+            size = size/1024/1024
+            x.add_row([bucket.name, round(size,2)])
+
+        except KeyError:
+            x.add_row([bucket.name, "No Size information"])
+
+    print(x)
+
 
 
 @buckets.command('getpublicacl')
