@@ -39,3 +39,11 @@ Commands:
   getpublicacl
   listbucket
   listbucketsize (limited to 1000 objects)
+
+### codecommit.py
+
+## Running
+
+python codecommit.py
+
+* lists 'HTTP URL' for each code commit repository
