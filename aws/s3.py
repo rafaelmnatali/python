@@ -116,13 +116,13 @@ def policy_bucket(getbucketversioning):
 @click.option('--getpublicaccessblock', default="true", help="List S3 bucket's with Encryption enabled")
 def policy_bucket(getpublicaccessblock):
     x = PrettyTable()
-    x.field_names = ["S3 Bucket", "BlockPublicAcls"] #, "IgnorePublicAcls", "BlockPublicPolicy", "RestrictPublicBuckets"]
+    x.field_names = ["S3 Bucket", "Public Access Block"]
     x.align["S3 Bucket"] = "l"
 
     for bucket in s3.buckets.all():
         try:
             response = client.get_public_access_block(Bucket = bucket.name)
-            x.add_row([bucket.name, "True"])
+            x.add_row([bucket.name, response['PublicAccessBlockConfiguration']])
 
         except botocore.exceptions.ClientError:
             x.add_row([bucket.name, "False"])
