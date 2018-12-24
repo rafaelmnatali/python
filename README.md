@@ -53,3 +53,11 @@ python codecommit.py
 ## Running
 
 python stop/startEC2Instances.py
+
+### ec2DescribeInstance.py
+
+used to retrieve metadata information from EC2 instances
+
+## Running 
+
+python ec2DescribeInstance.py
