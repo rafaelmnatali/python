@@ -47,3 +47,9 @@ Commands:
 python codecommit.py
 
 * lists 'HTTP URL' for each code commit repository
+
+### stop/startEC2Instances.py
+
+## Running
+
+python stop/startEC2Instances.py
