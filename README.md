@@ -1,24 +1,3 @@
-# python
-
-In this repository I'll be adding my Python scripts.
-
-### aws-ec2-manager.py
-
-updated script that uses click module, and show more information about EC2 instances
-
-## Configuring
-
-uses the configuration file created by the AWS CLI. e.g.: 
-
-aws configure --profile python
-
-## Running
-
-'pipenv run "python aws/aws-ec2-manager.py <command> <--project=PROJECT>"'
-
-*command* is list, stop, or start
-*project* is optional
-
 ### s3.py
 
 ## Running
