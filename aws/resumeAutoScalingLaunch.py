@@ -1,5 +1,6 @@
 import boto3
 
+# Enter the region your instances are in. Include only the region without specifying Availability Zone; e.g., 'us-east-1'
 region = 'us-west-2'
 
 def lambda_handler(event, context):

@@ -1,5 +1,6 @@
 import boto3
 
+# Enter the region your instances are in. Include only the region without specifying Availability Zone; e.g., 'us-east-1'
 region = 'us-west-2'
 
 def lambda_handler(event, context):
@@ -13,7 +14,7 @@ def lambda_handler(event, context):
         ]
     )
     
-            # Locate condofacil-dev instance id
+    # Locate condofacil-dev instance id
     
     ec2 = boto3.client('ec2', region_name=region)
     ec2_describe = ec2.describe_instances(
@@ -30,6 +31,8 @@ def lambda_handler(event, context):
     for r in ec2_describe['Reservations']:
         for i in (r['Instances']):
             condo_id=(i['InstanceId'])
+    
+    # Stop the instance
     
     ec2.stop_instances(InstanceIds=[condo_id])
     print("stopped your instances: " + str(condo_id))
