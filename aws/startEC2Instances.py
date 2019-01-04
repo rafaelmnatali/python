@@ -1,10 +1,26 @@
 import boto3
 # Enter the region your instances are in. Include only the region without specifying Availability Zone; e.g., 'us-east-1'
 region = 'us-west-2'
-# Enter your instances here: ex. ['X-XXXXXXXX', 'X-XXXXXXXX']
-instances = ['i-0d569c453dffcb893', 'i-053cc5bd3a42cce01', 'i-0f3b463d668c243f1', 'i-0462669ebc9cb233b', 'i-070332008f2812516']
 
 def lambda_handler(event, context):
+	
+	# locate the InstanceId for al EC2 in the region with tag Restart:yes
+
     ec2 = boto3.client('ec2', region_name=region)
-    ec2.start_instances(InstanceIds=instances)
-    print 'started your instances: ' + str(instances)
+    ec2_describe = ec2.describe_instances(
+        Filters=[
+            {
+                'Name': 'tag:Restart',
+                'Values': [
+                    'yes',
+                    ]
+            },
+        ]
+    )
+    
+    # start all the instances located previously
+    for r in ec2_describe['Reservations']:
+        for i in (r['Instances']):
+            instances_id=(i['InstanceId'])
+            ec2.start_instances(InstanceIds=[instances_id])
+            print("started your instances: " + str(instances_id))
