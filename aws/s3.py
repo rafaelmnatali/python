@@ -9,9 +9,11 @@ client = boto3.client('s3')
 
 @click.group()
 def buckets():
-    """Commands for S3 security check"""
+    """Commands for S3 information"""
+    """uses the click library to allow for command line parameters"""
+    """uses the prettytable library to output the results in table format"""
 
-
+# list S3 buckets
 @buckets.command('listbucket')
 @click.option('--listbucket', default="true", help="List S3 bucket names")
 def list_bucket(listbucket):
@@ -25,8 +27,9 @@ def list_bucket(listbucket):
     print(x)
     return
 
+# list S3 bucket size - boto3 library limits the retrieval of objects to 1000
 @buckets.command('listbucketsize')
-@click.option('--listbucketsize', default="true", help="List S3 bucket names")
+@click.option('--listbucketsize', default="true", help="List S3 bucket size")
 def list_bucket_size(listbucketsize):
     x = PrettyTable()
     x.field_names = ["S3 Bucket", "Size (Mb)"]
@@ -48,9 +51,9 @@ def list_bucket_size(listbucketsize):
     print(x)
 
 
-
+# List S3 buckets with Public Access enabled 
 @buckets.command('getpublicacl')
-@click.option('--getpublicacl', default="true", help="List S3 bucket's with Public Access enabled")
+@click.option('--getpublicacl', default="true", help="List S3 buckets with Public Access enabled")
 def acl_bucket(getpublicacl):
     x = PrettyTable()
     x.field_names = ["S3 Public Buckets", "Permission"]
@@ -65,8 +68,9 @@ def acl_bucket(getpublicacl):
                         x.add_row([bucket.name, grant['Permission'].lower()])
     print(x)
 
+# List S3 bucket's policies
 @buckets.command('getbucketpolicy')
-@click.option('--getbucketpolicy', default="true", help="List S3 bucket's with Policies enabled")
+@click.option('--getbucketpolicy', default="true", help="List S3 bucket's policies ")
 def policy_bucket(getbucketpolicy):
 
     for bucket in s3.buckets.all():
@@ -78,8 +82,9 @@ def policy_bucket(getbucketpolicy):
             print("\nBucket: ", bucket.name, "\nNo Bucket Policy")
     return
 
+# Retrieve the information whether the bucket is encrypted
 @buckets.command('getbucketencryption')
-@click.option('--getbucketencryption', default="true", help="List S3 bucket's with Encryption enabled")
+@click.option('--getbucketencryption', default="true", help="Retrieve the information whether the bucket is encrypted")
 def policy_bucket(getbucketencryption):
     x = PrettyTable()
     x.field_names = ["S3 Bucket", "Encryption"]
@@ -95,8 +100,9 @@ def policy_bucket(getbucketencryption):
 
     print(x)
 
+# Retrieve the information whether the bucket have versioning enable
 @buckets.command('getbucketversioning')
-@click.option('--getbucketversioning', default="true", help="List S3 bucket's with Versioning enabled")
+@click.option('--getbucketversioning', default="true", help="Retrieve the information whether the bucket have versioning enable")
 def policy_bucket(getbucketversioning):
     x = PrettyTable()
     x.field_names = ["S3 Bucket", "Versioning", "MFA Delete"]
@@ -112,8 +118,9 @@ def policy_bucket(getbucketversioning):
 
     print(x)
 
+# Retrieve the information whether the bucket have public access block configured
 @buckets.command('getpublicaccessblock')
-@click.option('--getpublicaccessblock', default="true", help="List S3 bucket's with Encryption enabled")
+@click.option('--getpublicaccessblock', default="true", help="Retrieve the information whether the bucket have public access block configured")
 def policy_bucket(getpublicaccessblock):
     x = PrettyTable()
     x.field_names = ["S3 Bucket", "Public Access Block"]
