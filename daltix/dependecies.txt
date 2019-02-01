@@ -1,0 +1,10 @@
+#python version:
+
+this script was created usin python 3.6
+
+#libraries:
+
+the only non-standard library this script uses is the 'ndjson'. 
+
+to install it use:
+sudo python3 -m pip install ndjson
