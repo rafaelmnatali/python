@@ -40,3 +40,13 @@ used to retrieve metadata information from EC2 instances
 ## Running 
 
 python ec2DescribeInstance.py
+
+### Aurora Serverless
+
+## aurora_serverless_connection
+
+Lambda function to connect to a Aurora Serverless database and execute a select
+
+## aurora_serverless_insert
+
+Lambda function to insert data into a Aurora Serverless database
