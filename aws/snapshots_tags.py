@@ -24,3 +24,24 @@ def lambda_handler(event, context):
             {'Key':'Name', 'Value': 'xxxxxx'},
             {'Key':'Project', 'Value': 'xxxxxxx'},
             {'Key':'Environment', 'Value': 'xxxxxx'}])
+        
+  #exclude snapshots that are past 7 days
+    for d in response['Snapshots']:
+        d1=(d['StartTime'])
+        now = datetime.now()
+        #remove time zone info from snapshot
+        snapshot_time = d1.replace(tzinfo=None)
+        
+        #number of days
+        n=7
+        date_n_days_ago = datetime.now() - timedelta(days=n)
+        #print(snapshot_time,date_n_days_ago)
+        
+        #difference between snapshot and 7 days ago 
+        delta=snapshot_time-date_n_days_ago
+        
+        #convert to string to iterate
+        str_delta=str(delta)
+        if "-1 day" in str_delta:
+            print("Removing snapshot: {} from: {}".format(d['SnapshotId'], snapshot_time))
+            ec2_client.delete_snapshot(SnapshotId=d['SnapshotId'])
